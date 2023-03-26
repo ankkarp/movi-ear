@@ -1,0 +1,9 @@
+.search{
+    position: absolute;
+    right: .7em;
+    top: .5em;
+}
+
+.search svg{
+    max-height: 1.5em;
+}

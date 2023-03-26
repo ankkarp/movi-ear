@@ -1,0 +1,21 @@
+.searchcontainer{
+    position: relative;
+    height: 2em;
+}
+
+.search{
+    border-radius: 1em;
+    padding: .5em;
+    padding-left: 1em; 
+    width: 100%;
+    background-color: rgb(22, 22, 22);
+    transition: .5s background-color;
+    font-size: 15px;
+    color: var(--accent-clr)
+}
+
+.search:focus{
+    /* outline: var(--accent-clr) solid 1px; */
+    background-color: rgb(15, 15, 15);
+    transition: .5s background-color;
+}
