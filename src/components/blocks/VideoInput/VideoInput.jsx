@@ -1,37 +1,29 @@
 import styles from "./VideoInput.module.css";
 
 import { useState, useRef } from "react";
+import { FileUploader } from "react-drag-drop-files";
 import UploadIcon from "@/components/icons/UploadIcon/UploadIcon";
 
 export default function VideoInput({ width, height }) {
-  const inputRef = useRef();
+  const fileTypes = ["MP4", "MOV"];
   const [source, setSource] = useState();
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    const url = URL.createObjectURL(file);
-    setSource(url);
-  };
-
-  const handleChoose = (e) => {
-    inputRef.current.click();
+  const [file, setFile] = useState(null);
+  const handleChange = (file) => {
+    setFile(file);
+    console.log(file);
+    setSource(URL.createObjectURL(file));
   };
 
   return (
     <div className={styles.upload}>
-      <input
-        ref={inputRef}
-        type="file"
-        onChange={handleFileChange}
-        accept=".mov,.mp4"
+      <FileUploader
+        handleChange={handleChange}
+        name="file"
+        types={fileTypes}
+        styles={{ color: "yellow" }}
       />
-      {!source && (
-        <button onClick={handleChoose}>
-          <UploadIcon width={200} height={200} />
-        </button>
-      )}
-      {source && <video width="100%" height={height} controls src={source} />}
-      <div className="footer">{source || "Nothing selectd"}</div>
+      <p>{file ? `Загружено: ${file.name}` : "Перетащите или выберите файл"}</p>
     </div>
   );
 }

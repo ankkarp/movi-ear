@@ -1,11 +1,5 @@
 .upload {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 1px dashed #ddd;
-    width: 500px;
-    height: 500px
+    
 }
 
 .upload input {
