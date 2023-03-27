@@ -13,7 +13,7 @@ export default function VideoInput({ width, height }) {
     let formData = new FormData();
     formData.append("file", file);
     try {
-      http.post("upload", formData, {
+      const response = http.post("upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -1,5 +1,7 @@
 import os
 import aiofiles
+from videohash import VideoHash
+import time
 from typing import Optional, List
 
 # from sqlalchemy import create_engine, text
@@ -43,11 +45,19 @@ app.add_middleware(
 @app.post("/upload")
 async def get_sports(file=Form(None)):
     try:
-        filepath = os.path.join('./', os.path.basename(file.filename))
+        filepath = os.path.basename(file.filename)
+        folder = 'data'
+        filename = f'{time.time()}_{filepath}'
+        filepath = f'{folder}/{filename}'
         async with aiofiles.open(filepath, 'wb') as f:
             while chunk := await file.read(CHUNK_SIZE):
                 await f.write(chunk)
-    except Exception:
+        videohash = VideoHash(filepath).hash_hex
+        hashedpath = f'{folder}/{videohash}_{filename}'
+        os.rename(filepath, str(hashedpath))
+        return {"hash": videohash}
+    except Exception as e:
+        print(e)
         raise HTTPException(status_code=500,
                             detail='There was an error uploading the file')
     finally:
