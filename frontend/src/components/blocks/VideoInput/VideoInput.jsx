@@ -12,21 +12,19 @@ export default function VideoInput({ width, height }) {
     const file = event.target.files[0];
     let formData = new FormData();
     formData.append("file", file);
-
-    http.post("upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      // onUploadProgress,
-    });
-    // axios.post("upload", formData, {
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    // });
-
-    const url = URL.createObjectURL(file);
-    setSource(url);
+    try {
+      http.post("upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        // onUploadProgress,
+      });
+    } catch (e) {
+      console.log(e.response);
+    } finally {
+      const url = URL.createObjectURL(file);
+      setSource(url);
+    }
   };
 
   const handleChoose = (e) => {
