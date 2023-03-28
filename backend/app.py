@@ -55,13 +55,11 @@ async def get_sports(file=Form(None)):
         videohash = VideoHash(filepath).hash_hex
         hashedpath = f'{folder}/{videohash}_{filename}'
         os.rename(filepath, str(hashedpath))
-        return {"hash": videohash}
+        return {"hash": videohash[2:]}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500,
                             detail='There was an error uploading the file')
-    finally:
-        await file.close()
 
 
 if __name__ == '__main__':

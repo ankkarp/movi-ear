@@ -3,24 +3,32 @@ import styles from "./VideoInput.module.css";
 import { useState, useRef } from "react";
 import UploadIcon from "@/components/icons/UploadIcon/UploadIcon";
 import http from "../../../api/http-common";
+import Router from "next/router";
 
 export default function VideoInput({ width, height }) {
   const [source, setSource] = useState();
   const inputRef = useRef();
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const redirectToVideo = (r) => {
+    window.location = "/" + r.data.hash;
+  };
+
+  const handleFileChange = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
     let formData = new FormData();
     formData.append("file", file);
     try {
-      const response = http.post("upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        // onUploadProgress,
-      });
+      const hash = http
+        .post("upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          // onUploadProgress,
+        })
+        .then((r) => redirectToVideo(r));
     } catch (e) {
-      console.log(e.response);
+      console.log(e);
     } finally {
       const url = URL.createObjectURL(file);
       setSource(url);
@@ -44,7 +52,7 @@ export default function VideoInput({ width, height }) {
             ref={inputRef}
             type="file"
             onChange={handleFileChange}
-            accept=".mov,.mp4"
+            accept=".mov,.mp4,.webm,.wmv,.avi,.avchd,.flv,.f4v,.swf,.mkv,.html5,.mpg,.mpeg"
           />
           <UploadIcon width={200} height={200} />
           <div className="footer">{source || "Загрузите видео"}</div>
