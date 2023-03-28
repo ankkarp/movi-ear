@@ -81,16 +81,11 @@
 
 
 :root {
-  --accent-clr: #0d074d;
-  --background-clr: #cfcfe0;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --accent-clr: #D8D80A;
-    --background-clr: #202023;
-    --accent-extra-clr: #d88c0a;
-  }
+  --accent-clr: #BA9D5A;
+  --background-clr: #001424;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+  'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+  'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 }
 
 html,

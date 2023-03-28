@@ -1,4 +1,5 @@
 import os
+import glob
 import aiofiles
 from videohash import VideoHash
 import time
@@ -6,12 +7,15 @@ from typing import Optional, List
 
 # from sqlalchemy import create_engine, text
 # from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Form
+from fastapi import FastAPI, HTTPException, Form, Header
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from starlette.requests import Request
+from starlette.responses import StreamingResponse, FileResponse, Response
 # import pandas as pd
 # import numpy as np
 import logging
+from video_utils import open_file
 
 # from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -46,20 +50,71 @@ app.add_middleware(
 async def get_sports(file=Form(None)):
     try:
         filepath = os.path.basename(file.filename)
-        folder = 'data'
+        folder = os.environ.get("STORAGE")
         filename = f'{time.time()}_{filepath}'
         filepath = f'{folder}/{filename}'
         async with aiofiles.open(filepath, 'wb') as f:
             while chunk := await file.read(CHUNK_SIZE):
                 await f.write(chunk)
-        videohash = VideoHash(filepath).hash_hex
-        hashedpath = f'{folder}/{videohash}_{filename}'
-        os.rename(filepath, str(hashedpath))
-        return {"hash": videohash[2:]}
+        videohash = VideoHash(filepath).hash_hex[2:]
+        if len(glob.glob(f'{os.environ.get("STORAGE")}/{videohash}*')):
+            hashedpath = f'{folder}/{videohash}_{filename}'
+            os.rename(filepath, str(hashedpath))
+        else:
+            os.remove(filepath)
+        return {"hash": videohash}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500,
                             detail='There was an error uploading the file')
+
+
+# @app.get("/video/{hash}")
+# async def get_streaming_video(request: Request, videohash: str) -> StreamingResponse:
+#     try:
+#         file, status_code, content_length, headers = await open_file(request, videohash)
+#         response = StreamingResponse(
+#             file,
+#             media_type='video/mp4',
+#             status_code=status_code,
+#         )
+
+#         response.headers.update({
+#             'Accept-Ranges': 'bytes',
+#             'Content-Length': str(content_length),
+#             **headers,
+#         })
+#         return response
+#     except Exception:
+#         raise HTTPException(status_code=404,
+#                             detail='Файл не найден')
+
+@app.get("/video/{videohash}")
+def download_file(videohash):
+    # print(f'{os.environ.get("STORAGE")}/{videohash}*.jpg')
+    files = glob.glob(f'{os.environ.get("STORAGE")}/{videohash}*')
+    if len(videohash) == 16 and len(files) > 0:
+        filepath = files[0]
+        return FileResponse(path=filepath, media_type='video/mp4')
+    else:
+        raise HTTPException(status_code=404, detail='Файл не найден')
+
+# @app.get("/video/{videohash}")
+# async def video_endpoint(videohash: str, range: str = Header(None)):
+#     filepath = glob.glob(f'{os.environ.get("STORAGE")}/{videohash}*.mp4')[0]
+#     # start, end = range.replace("bytes=", "").split("-")
+#     # start = int(start)
+#     # end = int(end) if end else start + CHUNK_SIZE
+#     with open(filepath, "rb") as video:
+#         # video.seek(start)
+#         data = video.read()
+#         # data = video.read(end - start)
+#         # filesize = str(filepath.stat().st_size)
+#         # headers = {
+#         #     'Content-Range': f'bytes {str(start)}-{str(end)}/{filesize}',
+#         #     'Accept-Ranges': 'bytes'
+#         # }
+#         return Response(data, status_code=200, headers=headers, media_type="video/mp4")
 
 
 if __name__ == '__main__':

@@ -2,11 +2,12 @@ import UploadButton from "@/components/buttons/UploadButton/UploadButton";
 import SearchBar from "@/components/elements/SearchBar/SearchBar";
 import styles from "./Header.module.css";
 
-const Header = () => {
+const Header = ({ show = true }) => {
   return (
     <div className={styles.header}>
-      <SearchBar />
-      <UploadButton />
+      {/* <SearchBar /> */}
+      <div />
+      {show ? <UploadButton /> : <div />}
     </div>
   );
 };

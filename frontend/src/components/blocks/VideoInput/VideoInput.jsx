@@ -4,9 +4,11 @@ import { useState, useRef } from "react";
 import UploadIcon from "@/components/icons/UploadIcon/UploadIcon";
 import http from "../../../api/http-common";
 import Router from "next/router";
+import LoadingIcon from "@/components/icons/LoadingIcon/LoadingIcon";
+import Image from "next/image";
 
-export default function VideoInput({ width, height }) {
-  const [source, setSource] = useState();
+export default function VideoInput() {
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef();
 
   const redirectToVideo = (r) => {
@@ -19,7 +21,7 @@ export default function VideoInput({ width, height }) {
     let formData = new FormData();
     formData.append("file", file);
     try {
-      const hash = http
+      http
         .post("upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -27,11 +29,9 @@ export default function VideoInput({ width, height }) {
           // onUploadProgress,
         })
         .then((r) => redirectToVideo(r));
+      setLoading(true);
     } catch (e) {
       console.log(e);
-    } finally {
-      const url = URL.createObjectURL(file);
-      setSource(url);
     }
   };
 
@@ -41,23 +41,24 @@ export default function VideoInput({ width, height }) {
 
   return (
     <div className={styles.container}>
-      {source ? (
-        <>
-          <video controls src={source} />
-          {source}
-        </>
-      ) : (
-        <button onClick={handleChoose} className={styles.upload}>
-          <input
-            ref={inputRef}
-            type="file"
-            onChange={handleFileChange}
-            accept=".mov,.mp4,.webm,.wmv,.avi,.avchd,.flv,.f4v,.swf,.mkv,.html5,.mpg,.mpeg"
-          />
-          <UploadIcon width={200} height={200} />
-          <div className="footer">{source || "Загрузите видео"}</div>
-        </button>
-      )}
+      <div className={styles.upload}>
+        {loading ? (
+          <LoadingIcon />
+        ) : (
+          <button onClick={handleChoose}>
+            <input
+              ref={inputRef}
+              type="file"
+              onChange={handleFileChange}
+              disabled={loading}
+              accept=".mov,.mp4,.webm,.wmv,.avi,.avchd,.flv,.f4v,.swf,.mkv,.html5,.mpg,.mpeg"
+            />
+            <UploadIcon width={200} height={200} />
+            <div className="footer">Загрузите видео</div>
+          </button>
+        )}
+      </div>
+      {/* )} */}
     </div>
   );
 }

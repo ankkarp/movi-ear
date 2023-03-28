@@ -1,7 +1,13 @@
-const VideoPlayer = () => {
+import styles from "./VideoPlayer.module.css";
+
+const VideoPlayer = ({ hash }) => {
   return (
-    <div>
-      <video controls src={source} />
+    <div className={styles.player}>
+      <video
+        controls="controls"
+        autoPlay="autoplay"
+        src={`${process.env.SERVER}/video/${hash}`}
+      />
     </div>
   );
 };

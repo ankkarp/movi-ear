@@ -1,0 +1,8 @@
+.upload{
+    transition: 1s ease-in-out;
+}
+
+.upload :hover {
+    fill: #e3d346;
+
+}
