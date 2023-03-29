@@ -35,4 +35,6 @@
 
 ## :warning: Доступ к сервису
 
+ТРЕБУЕТСЯ УСТАНОВКА [РАСШИРЕНИЯ]:(https://chrome.google.com/webstore/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino?hl=en)
+
 Приложение развернуто на сервере и доступно [по ссылке](http://91.185.84.134:3000) 
