@@ -3,23 +3,24 @@ import glob
 import aiofiles
 from videohash import VideoHash
 import time
-from typing import Optional, List
 
 # from sqlalchemy import create_engine, text
-# from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Form, Header
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from starlette.requests import Request
-from starlette.responses import StreamingResponse, FileResponse, Response
+from starlette.responses import FileResponse
+
+from model.src.main import pipeline
 # import pandas as pd
 # import numpy as np
 import logging
-from video_utils import open_file
+
+# from video_utils import open_file
 
 # from starlette.exceptions import HTTPException as StarletteHTTPException
 
-# load_dotenv()
+load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
 # logger = logging.getLogger(__name__)
@@ -36,6 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # engine = create_engine("postgresql://{user}:{psw}@{host}:{port}/{db}".format(
 #     user=os.environ.get('PGUSER'),
 #     psw=os.environ.get('POSTGRES_PASSWORD'),
@@ -47,20 +49,24 @@ app.add_middleware(
 
 
 @app.post("/upload")
-async def get_sports(file=Form(None)):
+async def upload(file=Form(None)):
     try:
         filepath = os.path.basename(file.filename)
         folder = os.environ.get("STORAGE")
+        print(folder)
         filename = f'{time.time()}_{filepath}'
         filepath = f'{folder}/{filename}'
         async with aiofiles.open(filepath, 'wb') as f:
             while chunk := await file.read(CHUNK_SIZE):
                 await f.write(chunk)
         videohash = VideoHash(filepath).hash_hex[2:]
+
         if len(glob.glob(f'{os.environ.get("STORAGE")}/{videohash}*')):
-            hashedpath = f'{folder}/{videohash}_{filename}'
-            os.rename(filepath, str(hashedpath))
+            os.remove(filepath)
         else:
+            hashedpath = f'{folder}/{videohash}_{filename}'
+            pipeline(filepath, hashedpath)
+            #os.remove(filepath, str(hashedpath))
             os.remove(filepath)
         return {"hash": videohash}
     except Exception as e:
@@ -99,6 +105,7 @@ def download_file(videohash):
     else:
         raise HTTPException(status_code=404, detail='Файл не найден')
 
+
 # @app.get("/video/{videohash}")
 # async def video_endpoint(videohash: str, range: str = Header(None)):
 #     filepath = glob.glob(f'{os.environ.get("STORAGE")}/{videohash}*.mp4')[0]
@@ -118,4 +125,5 @@ def download_file(videohash):
 
 
 if __name__ == '__main__':
+    #print(os.getcwd())
     uvicorn.run(app, host='localhost', port=8000)
