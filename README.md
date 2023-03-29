@@ -32,3 +32,7 @@
 
 <img align=center src='https://user-images.githubusercontent.com/51875349/228593390-0360c9ac-0519-464b-b4d6-bdae9a33dd04.png' width=400 height=250><img>
 <img align=center src='https://user-images.githubusercontent.com/51875349/228594170-8f82ba56-33ac-49ea-b1ab-74ae4824f8b4.png' width=400 height=250><img>
+
+## :warning: Доступ к сервису
+
+Приложение развернуто на сервере и доступно [по ссылке](http://91.185.84.134:8090) 
