@@ -1,8 +1,9 @@
-.upload{
+.upload g path{
     transition: 1s ease-in-out;
+    fill: var(--accent-clr)
 }
 
 .upload :hover {
-    fill: #e3d346;
-
+    fill: #d1cb86;
+    transition: .5s ease-in-out;
 }
