@@ -110,7 +110,7 @@ def pipeline(path_to_vid, save_path):
         }
     )
 
-    df = out_df[~out_df['caption'].str.contains('I am a prisoner of the state')]
+    out_df = out_df[~out_df['caption'].str.contains('I am a prisoner of the state')]
     out_df = out_df.reset_index(drop=True)
 
     #out_df.to_csv('result10.csv', index=False)
