@@ -110,6 +110,9 @@ def pipeline(path_to_vid, save_path):
         }
     )
 
+    df = out_df[~out_df['caption'].str.contains('I am a prisoner of the state')]
+    out_df = out_df.reset_index(drop=True)
+
     #out_df.to_csv('result10.csv', index=False)
 
     audio_duration_seconds = 0
@@ -171,11 +174,11 @@ def pipeline(path_to_vid, save_path):
 
     input_audio = 'final_audio.wav'
 
-    #command = f'ffmpeg -i {input_video} -filter:a "volume=0.5" output_1.mp4'
-    command2 = f'ffmpeg -i {input_video} -i input_audio.wav -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 -shortest {save_path}'
+    command = f'ffmpeg -i {input_video} -filter:a "volume=0.5" output_1.mp4'
+    command2 = f'ffmpeg -i output_1.mp4 -i input_audio.wav -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 -shortest {save_path}'
     command5 = f'ffmpeg -i {input_audio} -filter:a "volume=4" input_audio.wav'
 
-    #subprocess.call(command, shell=True)
+    subprocess.call(command, shell=True)
     #print('command1 is done')
     subprocess.call(command5, shell=True)
     print('command5 is done')
@@ -183,7 +186,7 @@ def pipeline(path_to_vid, save_path):
     print('command1 is done')
 
     os.remove(input_audio)
-    #os.remove('output_1.mp4')
+    os.remove('output_1.mp4')
     os.remove('input_audio.wav')
 
 

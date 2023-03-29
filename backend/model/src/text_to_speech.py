@@ -5,7 +5,7 @@ from pydub import AudioSegment
 
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
