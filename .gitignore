@@ -1,4 +1,7 @@
 .venv*
 data
-.env
+backend/.env
 __pycache__*
+*.env*
+*.pt
+backend/model/test
